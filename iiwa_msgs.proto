@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+// Current state of an impedance controlled robot.
+// The pose is the one of the frame_id relative to the robots base.
+// The force is measured in the frame_id frame.
+message CartesianState{
+  // timestamp of the state as UNIX time
+  uint64 timestamp = 1;
+  // the frame of the pose and force measurement
+  string frame_id = 2;
+  // demanded pose of the robot
+  CartesianPose demanded_pose = 3;
+  // measured pose of the robot
+  CartesianPose pose = 4;
+  // measured force in the frame_id
+  CartesianForce force = 5;
+  // uncertainty of the force measurement
+  CartesianForce force_uncertainty = 6;
+}
+
+// Cartesian pose of XYZ coordinates and ZYX (yaw, pitch, roll) rotation.
+message CartesianPose{
+  // cartesian x position [m]
+  double x = 1;
+  // cartesian y position [m]
+  double y = 2;
+  // cartesian z position [m]
+  double z = 3;
+  // rotation around z axis (yaw) [rad]
+  double a = 4;
+  // rotation around y axis (pitch) [rad]
+  double b = 5;
+  // rotation around x axis (roll) [rad]
+  double c = 6;
+}
+
+// force and torque in cartesian coordinates
+message CartesianForce{
+  // force in x direction [N]
+  double f_x = 1;
+  // force in y direction [N]  
+  double f_y = 2;
+  // force in z direction [N]
+  double f_z = 3;
+  // torque around the x axis [Nm]
+  double t_x = 4;
+  // torque around the y axis [Nm]
+  double t_y = 5;
+   // torque around the z axis [Nm]
+  double t_z = 6;
+}

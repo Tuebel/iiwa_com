@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<RoboticsAPIData version="3">
+    <world>
+        <gravitation x="0.0" y="0.0" z="9.81"/>
+    </world>
+    <objectTemplates>
+        <toolTemplate class="" name="Kugel">
+            <frames>
+                <frame id="_d83f1980-3f46-467a-88c2-57eb06515af2" name="Frame">
+                    <transformation a="0.0" b="0.0" c="0.0" x="0.0" y="0.0" z="0.0"/>
+                </frame>
+            </frames>
+            <additionalInformation>
+                <info key="SafetyID" type="java.lang.Integer" value="1"/>
+            </additionalInformation>
+            <loadData cogA="0.0" cogB="0.0" cogC="0.0" cogX="0.0" cogY="0.0" cogZ="0.0" inertiaX="0.0" inertiaY="0.0" inertiaZ="0.0" mass="0.5"/>
+        </toolTemplate>
+        <toolTemplate class="" name="ToolTemplate">
+            <frames>
+                <frame id="_4ae88547-43d9-4a94-9b27-04056841f89e" name="Frame">
+                    <transformation a="0.0" b="0.0" c="0.0" x="0.0" y="0.0" z="0.0"/>
+                </frame>
+            </frames>
+            <additionalInformation>
+                <info key="SafetyID" type="java.lang.Integer" value="0"/>
+            </additionalInformation>
+            <loadData cogA="0.0" cogB="0.0" cogC="0.0" cogX="0.36271748603218207" cogY="-1.3348811637994398" cogZ="-18.09727551254043" inertiaX="0.0" inertiaY="0.0" inertiaZ="0.0" mass="0.895863946758445"/>
+        </toolTemplate>
+    </objectTemplates>
+    <processDataContainer>
+        <processData dataType="java.lang.Boolean" defaultValue="false" displayName="STOP" id="STOP" value="false"/>
+        <processData dataType="java.lang.Integer" defaultValue="30005" displayName="PORT" id="PORT" max="30100.0" min="0.0" value="30005"/>
+        <processData dataType="java.lang.String" defaultValue="Aufnahme" displayName="NameBewegungsaufnahme" id="someName" value="Aufnahme"/>
+        <processData dataType="java.lang.Boolean" defaultValue="false" displayName="Aufnahme" id="Aufnahme" value="false"/>
+    </processDataContainer>
+</RoboticsAPIData>

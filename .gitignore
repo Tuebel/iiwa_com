@@ -1,2 +1,5 @@
+# catkin
 build/
 proto/generated_cpp
+# KUKA Sunrise workspace
+.metadata

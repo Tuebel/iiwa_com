@@ -1,0 +1,15 @@
+# ignore sunrise git
+.git
+# builds
+bin
+# config
+.classpath
+.project
+.SafetyConfiguration
+.SafetyData
+.Sunrise
+.settings
+build.xml
+KUKAJavaLib
+SafetyConfiguration.sconf
+StationSetup.cat

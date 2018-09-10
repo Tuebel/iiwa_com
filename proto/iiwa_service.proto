@@ -1,24 +1,34 @@
 syntax = "proto3";
+package iiwa_com;
+
+// Control the KUKA iiwa robot via RPC calls.
+// Receive information from the KUKA iiwa robot via streaming calls.
+service IiwaService{
+  // stream the cartesian pose from the robot
+  rpc StreamCartesianPose (StreamCartesianPoseRequest) returns (stream CartesianPose) {}
+  // stream the cartesian state from the robot
+  rpc StreamCartesianState (StreamCartesianStateRequest) returns (stream CartesianState) {}
+}
+
+message StreamCartesianPoseRequest {}
+message StreamCartesianStateRequest {}
 
 // Current state of an impedance controlled robot.
 // The pose is the one of the frame_id relative to the robots base.
 // The force is measured in the frame_id frame.
 message CartesianState{
-  // timestamp of the state as UNIX time
-  uint64 timestamp = 1;
-  // the frame of the pose and force measurement
-  string frame_id = 2;
   // demanded pose of the robot
-  CartesianPose demanded_pose = 3;
+  CartesianPose demanded_pose = 1;
   // measured pose of the robot
-  CartesianPose pose = 4;
+  CartesianPose pose = 2;
   // measured force in the frame_id
-  CartesianForce force = 5;
+  CartesianForce force = 3;
   // uncertainty of the force measurement
-  CartesianForce force_uncertainty = 6;
+  CartesianForce force_uncertainty = 4;
 }
 
-// Cartesian pose of XYZ coordinates and ZYX (yaw, pitch, roll) rotation.
+// Cartesian transformation of XYZ coordinates and ZYX (yaw, pitch, roll)
+// rotation.
 message CartesianPose{
   // cartesian x position [m]
   double x = 1;
@@ -32,6 +42,10 @@ message CartesianPose{
   double b = 5;
   // rotation around x axis (roll) [rad]
   double c = 6;
+  // pose is relative to this frame
+  string base_frame = 7;
+  // pose of this fame is measured
+  string child_frame = 8;
 }
 
 // force and torque in cartesian coordinates
@@ -48,4 +62,6 @@ message CartesianForce{
   double t_y = 5;
    // torque around the z axis [Nm]
   double t_z = 6;
+  // force is measured in this frame
+  string frame = 7;
 }

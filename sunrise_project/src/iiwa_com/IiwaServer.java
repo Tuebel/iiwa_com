@@ -56,7 +56,7 @@ public class IiwaServer {
 	 */
 	public void blockUntilShutdown() throws InterruptedException {
 		if (server != null) {
-
+			server.awaitTermination();
 		}
 	}
 

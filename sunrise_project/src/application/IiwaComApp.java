@@ -8,7 +8,10 @@ import com.kuka.roboticsAPI.applicationModel.RoboticsAPIApplication;
 import com.kuka.roboticsAPI.deviceModel.LBR;
 import com.kuka.roboticsAPI.geometricModel.CartDOF;
 import com.kuka.roboticsAPI.geometricModel.Tool;
+import com.kuka.roboticsAPI.motionModel.IMotionContainer;
+import com.kuka.roboticsAPI.motionModel.PositionHold;
 import com.kuka.roboticsAPI.motionModel.controlModeModel.CartesianImpedanceControlMode;
+import com.kuka.roboticsAPI.persistenceModel.processDataModel.IProcessData;
 import com.kuka.roboticsAPI.uiModel.ApplicationDialogType;
 import com.kuka.task.ITaskLogger;
 
@@ -30,32 +33,29 @@ public class IiwaComApp extends RoboticsAPIApplication {
 	@Inject
 	private ITaskLogger logger;
 	@Inject
-	
+	@Named("PORT")
+	private IProcessData port;
 
 	// server
 	private IiwaServer server;
-	// Servo control shall only be executed in one thread (here)
-	private ISmartServoRuntime servoRuntime;
 
 	@Override
 	public void initialize() {
 		// frames and tools
 		tool.attachTo(robot.getFlange());
-		// smart servoing
-		SmartServo servoMotion = new SmartServo(robot.getCurrentJointPosition());
 		// cartesian impedance control
 		if (!SmartServo.validateForImpedanceMode(tool)) {
 			logger.error("Validation of Torque Model failed");
 		}
 		CartesianImpedanceControlMode impControl = new CartesianImpedanceControlMode();
-		impControl.parametrize(CartDOF.TRANSL).setStiffness(100);
-		impControl.parametrize(CartDOF.ROT).setStiffness(10);
-		impControl.setNullSpaceStiffness(50);
-		// activate motion
-		robot.moveAsync(servoMotion.setMode(impControl));
-		servoRuntime = servoMotion.getRuntime();
+		impControl.parametrize(CartDOF.TRANSL).setStiffness(50);
+		impControl.parametrize(CartDOF.ROT).setStiffness(5);
+		impControl.setNullSpaceStiffness(100);
+		// move without timeout
+		robot.moveAsync(new PositionHold(impControl, -1, null));
 		// create the gRPC server
-		server = new IiwaServer(robot, tool.getDefaultMotionFrame(), 30000);
+		server = new IiwaServer(robot, robot.getFlange(),
+				(Integer) port.getValue());
 	}
 
 	@Override
@@ -73,7 +73,6 @@ public class IiwaComApp extends RoboticsAPIApplication {
 
 	@Override
 	public void dispose() {
-		servoRuntime.stopMotion();
 		if (server != null) {
 			server.stop();
 			try {

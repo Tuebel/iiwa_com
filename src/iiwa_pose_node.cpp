@@ -26,7 +26,7 @@ public:
     private_nh.param<std::string>("iiwa_address", iiwa_address, "172.31.1.147");
     // port of the tcp server
     int iiwa_port;
-    private_nh.param<int>("iiwa_port", iiwa_port, 30000);
+    private_nh.param<int>("iiwa_port", iiwa_port, 30005);
     // connect to the iiwa and create stub
     auto channel = grpc::CreateChannel(
         iiwa_address + ":" + std::to_string(iiwa_port),
@@ -54,6 +54,8 @@ public:
     if (!status.ok())
     {
       ROS_ERROR("StreamCartesianPose rpc failed");
+      ROS_ERROR(status.error_message().c_str());
+      ROS_ERROR(status.error_details().c_str());
     }
   }
 

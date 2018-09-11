@@ -29,6 +29,8 @@ public class IiwaComApp extends RoboticsAPIApplication {
 	private Tool tool;
 	@Inject
 	private ITaskLogger logger;
+	@Inject
+	
 
 	// server
 	private IiwaServer server;
@@ -46,8 +48,8 @@ public class IiwaComApp extends RoboticsAPIApplication {
 			logger.error("Validation of Torque Model failed");
 		}
 		CartesianImpedanceControlMode impControl = new CartesianImpedanceControlMode();
-		impControl.parametrize(CartDOF.TRANSL).setStiffness(1000);
-		impControl.parametrize(CartDOF.ROT).setStiffness(100);
+		impControl.parametrize(CartDOF.TRANSL).setStiffness(100);
+		impControl.parametrize(CartDOF.ROT).setStiffness(10);
 		impControl.setNullSpaceStiffness(50);
 		// activate motion
 		robot.moveAsync(servoMotion.setMode(impControl));
@@ -72,11 +74,13 @@ public class IiwaComApp extends RoboticsAPIApplication {
 	@Override
 	public void dispose() {
 		servoRuntime.stopMotion();
-		server.stop();
-		try {
-			server.blockUntilShutdown();
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
+		if (server != null) {
+			server.stop();
+			try {
+				server.blockUntilShutdown();
+			} catch (InterruptedException e) {
+				logger.error(e.getMessage());
+			}
 		}
 	}
 }

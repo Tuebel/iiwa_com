@@ -2,6 +2,8 @@ package iiwa_com;
 
 import java.io.IOException;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.kuka.roboticsAPI.deviceModel.LBR;
 import com.kuka.roboticsAPI.geometricModel.Frame;
 import com.kuka.roboticsAPI.geometricModel.ObjectFrame;
@@ -54,7 +56,7 @@ public class IiwaServer {
 	 */
 	public void blockUntilShutdown() throws InterruptedException {
 		if (server != null) {
-			
+
 		}
 	}
 
@@ -101,6 +103,13 @@ public class IiwaServer {
 						.setA(p.getAlphaRad()).setB(p.getBetaRad())
 						.setC(p.getGammaRad()).build());
 			}
+		}
+
+		@Override
+		public void streamCartesianState(
+				iiwa_com.IiwaServiceOuterClass.StreamCartesianStateRequest request,
+				io.grpc.stub.StreamObserver<iiwa_com.IiwaServiceOuterClass.CartesianState> responseObserver) {
+			throw new NotImplementedException();
 		}
 	}
 }

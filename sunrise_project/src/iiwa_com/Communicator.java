@@ -66,6 +66,11 @@ public class Communicator implements Runnable {
 					logger.info("streaming pose");
 					streamPose();
 					break;
+				case CARTESIAN_STATE_REQUEST:
+					logger.info("cartesian state streaming is not implemented yet");
+					break;
+				default:
+					logger.info("Unsupported message type");
 				}
 
 			} catch (InvalidProtocolBufferException e) {

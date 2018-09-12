@@ -1,7 +1,7 @@
 #pragma once
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/WrenchStamped.h>
-#include <iiwa_service.pb.h>
+#include <iiwa_msgs.pb.h>
 
 namespace iiwa_com
 {

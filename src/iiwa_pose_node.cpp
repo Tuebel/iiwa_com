@@ -1,10 +1,5 @@
-#include <grpc/grpc.h>
-#include <grpcpp/channel.h>
-#include <grpcpp/client_context.h>
-#include <grpcpp/create_channel.h>
-#include <grpcpp/security/credentials.h>
+#include <iiwa_com/communicator.hpp>
 #include <iiwa_com/iiwa_geometry_msgs.hpp>
-#include <iiwa_service.grpc.pb.h>
 #include <ros/ros.h>
 #include <tf2_ros/transform_broadcaster.h>
 
@@ -27,11 +22,9 @@ public:
     // port of the tcp server
     int iiwa_port;
     private_nh.param<int>("iiwa_port", iiwa_port, 30005);
-    // connect to the iiwa and create stub
-    auto channel = grpc::CreateChannel(
-        iiwa_address + ":" + std::to_string(iiwa_port),
-        grpc::InsecureChannelCredentials());
-    stub = std::unique_ptr<IiwaService::Stub>(new IiwaService::Stub(channel));
+    // connect to the iiwa
+    communicator = std::unique_ptr<Communicator>(
+        new Communicator(iiwa_address, iiwa_port));
   }
 
   /*!
@@ -39,29 +32,14 @@ public:
   */
   void start()
   {
-    // init the stream call
-    grpc::ClientContext context;
-    StreamCartesianPoseRequest request;
-    CartesianPose pose;
-    auto reader = stub->StreamCartesianPose(&context, request);
-    // keep reading while ros is alive and the stream is not finished
-    while (ros::ok() && reader->Read(&pose))
-    {
-      // republish the pose as tf2
+    communicator->stream_pose([&](const CartesianPose &pose) {
       tf_broadcast.sendTransform(from_iiwa_pose(pose));
-    }
-    auto status = reader->Finish();
-    if (!status.ok())
-    {
-      ROS_ERROR("StreamCartesianPose rpc failed");
-      ROS_ERROR(status.error_message().c_str());
-      ROS_ERROR(status.error_details().c_str());
-    }
+    });
   }
 
 private:
   ros::NodeHandle node_handle;
-  std::unique_ptr<IiwaService::Stub> stub;
+  std::unique_ptr<Communicator> communicator;
   // republishing the transformation
   tf2_ros::TransformBroadcaster tf_broadcast;
 };
@@ -72,5 +50,6 @@ int main(int argc, char **argv)
   // init node
   ros::init(argc, argv, "iiwa_pose_node");
   iiwa_com::IiwaPoseNode pose_node;
+  pose_node.start();
   return EXIT_SUCCESS;
 }

@@ -21,6 +21,7 @@ public class TcpServer implements Runnable {
 	private final ITaskLogger logger;
 	private final ServerSocket server;
 	private final List<Communicator> communicators;
+	private final List<Thread> com_threads;
 
 	public TcpServer(int port, ITaskLogger logger, LBR robot)
 			throws IOException {
@@ -29,6 +30,7 @@ public class TcpServer implements Runnable {
 		// build the server
 		server = new ServerSocket(port);
 		communicators = new ArrayList<Communicator>();
+		com_threads = new ArrayList<Thread>();
 	}
 
 	@Override
@@ -58,7 +60,11 @@ public class TcpServer implements Runnable {
 		while (!server.isClosed()) {
 			try {
 				Socket socket = server.accept();
-				communicators.add(new Communicator(socket, logger, robot));
+				Communicator communicator = new Communicator(socket, logger, robot);
+				Thread com_thread = new Thread(communicator);
+				com_thread.start();
+				communicators.add(communicator);
+				com_threads.add(com_thread);
 				logger.info("added new communicator from "
 						+ socket.getInetAddress().toString());
 			} catch (IOException e) {

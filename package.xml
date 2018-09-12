@@ -4,8 +4,8 @@
   <version>0.1.0</version>
   <description>
   Enables basic communication with a KUKA LBR iiwa robot by utilizing a Sunrise
-  Project gRPC and ROS. For now the package focuses on receiving the robots 
-  state.
+  Project, protocol buffers and ROS. For now the package focuses on receiving 
+  the robots state.
   </description>
   <maintainer email="tim.uebelhoer@rwth-aachen.de">Tim Übelhör</maintainer>
   <license>MIT</license>
@@ -14,7 +14,6 @@
   <doc_depend>doxygen</doc_depend>
   <buildtool_depend>catkin</buildtool_depend>
   <doc_depend>doxygen</doc_depend>
-  <depend>gRPC</depend>
   <depend>Protobuf</depend>
   <depend>sensor_msgs</depend>
   <depend>tf2_geometry_msgs</depend>

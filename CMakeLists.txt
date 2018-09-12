@@ -15,11 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_geometry_msgs
   tf2_ros)
 find_package(Protobuf CONFIG REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
 
 # set aliases so catkin_package() does not complain
 set(Protobuf_LIBRARIES protobuf::libprotobuf)
-set(gRPC_LIBRARIES gRPC::grpc++_unsecure)
 
 # packaging
 catkin_package(
@@ -29,21 +27,21 @@ catkin_package(
   sensor_msgs
   tf2_geometry_msgs
   tf2_ros
- DEPENDS Protobuf gRPC)
+ DEPENDS Protobuf)
 
 # create library
 add_library(iiwa_com)
 target_sources(iiwa_com PRIVATE
-  src/generated/iiwa_service.grpc.pb.cc
-  src/generated/iiwa_service.pb.cc
+  src/generated/iiwa_msgs.pb.cc
+  src/iiwa_com/com_channel.cpp
+  src/iiwa_com/communicator.cpp
   src/iiwa_com/iiwa_geometry_msgs.cpp)
 target_include_directories(iiwa_com PUBLIC
   ${catkin_INCLUDE_DIRS}
   include
   src/generated)
 target_link_libraries(iiwa_com PUBLIC
-    ${catkin_LIBRARIES}  
-    ${gRPC_LIBRARIES}
+    ${catkin_LIBRARIES}
     ${Protobuf_LIBRARIES})
 
 # executables

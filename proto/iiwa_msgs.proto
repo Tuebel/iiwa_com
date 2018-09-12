@@ -1,17 +1,21 @@
 syntax = "proto3";
 package iiwa_com;
 
-// Control the KUKA iiwa robot via RPC calls.
-// Receive information from the KUKA iiwa robot via streaming calls.
-service IiwaService{
-  // stream the cartesian pose from the robot
-  rpc StreamCartesianPose (StreamCartesianPoseRequest) returns (stream CartesianPose) {}
-  // stream the cartesian state from the robot
-  rpc StreamCartesianState (StreamCartesianStateRequest) returns (stream CartesianState) {}
+// Wrap the message so different message types are possible
+// Metadata might find its way into this message
+message WrapperMsg{
+  oneof msg{
+    CartesianForce cartesian_force = 1;
+    CartesianPose cartesian_pose = 2;
+    CartesianState cartesian_state = 3;
+    CartesianForceRequest cartesian_force_request = 4;
+    CartesianPoseRequest cartesian_pose_request = 5;
+    CartesianStateRequest cartesian_state_request = 6;
+  }
 }
 
-message StreamCartesianPoseRequest {}
-message StreamCartesianStateRequest {}
+// Request a stream of cartesian states
+message CartesianStateRequest{}
 
 // Current state of an impedance controlled robot.
 // The pose is the one of the frame_id relative to the robots base.
@@ -26,6 +30,9 @@ message CartesianState{
   // uncertainty of the force measurement
   CartesianForce force_uncertainty = 4;
 }
+
+// Request a stream of cartesian poses
+message CartesianPoseRequest{}
 
 // Cartesian transformation of XYZ coordinates and ZYX (yaw, pitch, roll)
 // rotation.
@@ -47,6 +54,9 @@ message CartesianPose{
   // pose of this fame is measured
   string child_frame = 8;
 }
+
+// Request a stream of cartesian forces
+message CartesianForceRequest{}
 
 // force and torque in cartesian coordinates
 message CartesianForce{

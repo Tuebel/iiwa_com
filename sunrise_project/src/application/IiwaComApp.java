@@ -1,5 +1,7 @@
 package application;
 
+import iiwa_com.TcpServer;
+
 import java.io.IOException;
 
 import com.kuka.roboticsAPI.applicationModel.RoboticsAPIApplication;
@@ -12,12 +14,13 @@ import com.kuka.roboticsAPI.persistenceModel.processDataModel.IProcessData;
 import com.kuka.roboticsAPI.uiModel.ApplicationDialogType;
 import com.kuka.task.ITaskLogger;
 
-import iiwa_com.IiwaServer;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
- * The robotics Reha application runs the statemachines and the server.
+ * 
+ * @author Tim Übelhör
+ * 
  */
 public class IiwaComApp extends RoboticsAPIApplication {
 
@@ -34,7 +37,7 @@ public class IiwaComApp extends RoboticsAPIApplication {
 	private IProcessData port;
 
 	// server
-	private IiwaServer server;
+	private TcpServer server;
 
 	@Override
 	public void initialize() {
@@ -47,31 +50,32 @@ public class IiwaComApp extends RoboticsAPIApplication {
 		impControl.setNullSpaceStiffness(100);
 		// move without timeout
 		robot.moveAsync(new PositionHold(impControl, -1, null));
-		// create the gRPC server
-		server = new IiwaServer(robot, robot.getFlange(),
-				(Integer) port.getValue(), logger);
-	}
-
-	@Override
-	public void run() {
+		// create the server
 		try {
-			server.start();
-			// Keep alive until the user finishes the application
-			getApplicationUI().displayModalDialog(
-					ApplicationDialogType.INFORMATION,
-					"Press ok to finish the application.", "OK");
+			server = new TcpServer((Integer) port.getValue(), logger, robot);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
 	}
 
 	@Override
+	public void run() {
+		if (server != null) {
+			Thread serverThread = new Thread(server);
+			serverThread.start();
+		}
+		// Keep alive until the user finishes the application
+		getApplicationUI().displayModalDialog(
+				ApplicationDialogType.INFORMATION,
+				"Press ok to finish the application.", "OK");
+	}
+
+	@Override
 	public void dispose() {
 		if (server != null) {
-			server.stop();
 			try {
-				server.blockUntilShutdown();
-			} catch (InterruptedException e) {
+				server.close();
+			} catch (IOException e) {
 				logger.error(e.getMessage());
 			}
 		}

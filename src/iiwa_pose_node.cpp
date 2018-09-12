@@ -25,6 +25,7 @@ public:
     // connect to the iiwa
     communicator = std::unique_ptr<Communicator>(
         new Communicator(iiwa_address, iiwa_port));
+    ROS_INFO("initialized communicator");
   }
 
   /*!
@@ -32,7 +33,9 @@ public:
   */
   void start()
   {
+    ROS_INFO("start to stream poses");
     communicator->stream_pose([&](const CartesianPose &pose) {
+      ROS_INFO("received pose");
       tf_broadcast.sendTransform(from_iiwa_pose(pose));
     });
   }

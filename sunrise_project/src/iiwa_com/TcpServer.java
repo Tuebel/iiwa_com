@@ -60,13 +60,14 @@ public class TcpServer implements Runnable {
 		while (!server.isClosed()) {
 			try {
 				Socket socket = server.accept();
-				Communicator communicator = new Communicator(socket, logger, robot);
+				Communicator communicator = new Communicator(socket, logger,
+						robot);
 				Thread com_thread = new Thread(communicator);
 				com_thread.start();
 				communicators.add(communicator);
 				com_threads.add(com_thread);
-				logger.info("added new communicator from "
-						+ socket.getInetAddress().toString());
+				logger.info("added new communicator on "
+						+ socket.getInetAddress());
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 			}

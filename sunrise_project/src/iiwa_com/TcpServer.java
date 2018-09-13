@@ -47,11 +47,11 @@ public class TcpServer implements Runnable {
 		// closed the server
 		if (!server.isClosed()) {
 			server.close();
+			logger.info("closed the server");
 		}
 		for (Communicator communicator : communicators) {
 			communicator.close();
 		}
-		logger.info("closed the server");
 	}
 
 	@Override

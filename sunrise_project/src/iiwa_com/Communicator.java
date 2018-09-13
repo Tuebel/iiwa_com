@@ -83,9 +83,10 @@ public class Communicator implements Runnable {
 				logger.error(e.getMessage());
 			} catch (IOException e) {
 				logger.error(e.getMessage());
+				break;
 			}
 		}
-		logger.info("closed " + socket.getInetAddress());
+		close();
 	}
 
 	private void streamForce() {
@@ -100,6 +101,7 @@ public class Communicator implements Runnable {
 				msg.writeDelimitedTo(socket.getOutputStream());
 			} catch (IOException e) {
 				logger.error(e.getMessage());
+				break;
 			}
 		}
 	}
@@ -116,6 +118,7 @@ public class Communicator implements Runnable {
 				msg.writeDelimitedTo(socket.getOutputStream());
 			} catch (IOException e) {
 				logger.error(e.getMessage());
+				break;
 			}
 		}
 	}

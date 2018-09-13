@@ -3,6 +3,13 @@
 #include <memory>
 
 namespace io = google::protobuf::io;
+// forwad declare the implementations
+namespace google::protobuf::io
+{
+class FileInputStream;
+class FileOutputStream;
+} // namespace google::protobuf::io
+
 namespace iiwa_com
 {
 /*!
@@ -28,11 +35,21 @@ public:
   */
   std::shared_ptr<io::ZeroCopyOutputStream> get_output_stream() const;
 
+  /*!
+  Flushes any buffers of the output stream
+  */
+  void flush_output();
+
+  /*!
+  Get the file descriptor of the underyling socket
+  */
+  int get_socket() const;
+
 private:
   // using raw POSIX sockets for the FileInputStream and FileOutputStream
   int socket_fd;
   // streams with the socket as file descriptor
-  std::shared_ptr<io::ZeroCopyInputStream> input_stream;
-  std::shared_ptr<io::ZeroCopyOutputStream> output_stream;
+  std::shared_ptr<io::FileInputStream> input_stream;
+  std::shared_ptr<io::FileOutputStream> output_stream;
 };
 } // namespace iiwa_com

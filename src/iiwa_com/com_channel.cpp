@@ -49,4 +49,15 @@ std::shared_ptr<io::ZeroCopyOutputStream> ComChannel::get_output_stream() const
 {
   return output_stream;
 }
+
+void ComChannel::flush_output()
+{
+  output_stream->Flush();
+}
+
+int ComChannel::get_socket() const
+{
+  return socket_fd;
+}
+
 } // namespace iiwa_com

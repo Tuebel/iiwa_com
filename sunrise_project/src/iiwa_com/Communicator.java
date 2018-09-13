@@ -53,6 +53,7 @@ public class Communicator implements Runnable {
 
 	@Override
 	public void run() {
+		logger.info("listening for messages on " + socket.getInetAddress());
 		while (socket.isConnected()) {
 			try {
 				WrapperMsg msg = WrapperMsg.parseDelimitedFrom(socket
@@ -70,7 +71,7 @@ public class Communicator implements Runnable {
 					logger.info("cartesian state streaming is not implemented yet");
 					break;
 				default:
-					logger.info("Unsupported message type");
+					logger.error("Unsupported message type");
 				}
 
 			} catch (InvalidProtocolBufferException e) {
@@ -79,6 +80,7 @@ public class Communicator implements Runnable {
 				logger.error(e.getMessage());
 			}
 		}
+		logger.info("closed " + socket.getInetAddress());
 	}
 
 	private void streamForce() {

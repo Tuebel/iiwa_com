@@ -8,7 +8,7 @@ namespace iiwa_com
 Communicator::Communicator(const std::string &address, unsigned short port)
     : com_channel(address, port) {}
 
-void Communicator::stream_pose(std::function<void(const CartesianPose& pose)> callback)
+void Communicator::stream_pose(std::function<void(const CartesianPose &pose)> callback)
 {
   // send the request
   CartesianPoseRequest pose_request;
@@ -16,6 +16,7 @@ void Communicator::stream_pose(std::function<void(const CartesianPose& pose)> ca
   request.set_allocated_cartesian_pose_request(&pose_request);
   util::SerializeDelimitedToZeroCopyStream(
       request, com_channel.get_output_stream().get());
+  com_channel.flush_output();
   // keep parsing new pose messages
   WrapperMsg response;
   while (util::ParseDelimitedFromZeroCopyStream(
@@ -27,7 +28,7 @@ void Communicator::stream_pose(std::function<void(const CartesianPose& pose)> ca
     }
     else
     {
-      std::cerr << "unexpected message type\n";
+      std::cerr << "unexpected message type: " << response.msg_case() << "\n";
     }
   }
 }

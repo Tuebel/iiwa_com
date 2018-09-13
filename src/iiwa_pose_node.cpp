@@ -33,11 +33,11 @@ public:
   */
   void start()
   {
-    ROS_INFO("start to stream poses");
+    ROS_INFO("start streaming poses");
     communicator->stream_pose([&](const CartesianPose &pose) {
-      ROS_INFO("received pose");
       tf_broadcast.sendTransform(from_iiwa_pose(pose));
     });
+    ROS_INFO("finished streaming poses");
   }
 
 private:

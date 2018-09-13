@@ -48,32 +48,34 @@ public class Communicator implements Runnable {
 	public void close() throws IOException {
 		if (!socket.isClosed()) {
 			socket.close();
+			logger.info("closed communicator on " + socket.getInetAddress());
 		}
 	}
 
 	@Override
 	public void run() {
 		logger.info("listening for messages on " + socket.getInetAddress());
-		while (socket.isConnected()) {
+		while (!socket.isClosed() && socket.isConnected()) {
 			try {
-				WrapperMsg msg = WrapperMsg.parseDelimitedFrom(socket
-						.getInputStream());
-				switch (msg.getMsgCase()) {
-				case CARTESIAN_FORCE_REQUEST:
-					logger.info("streaming force");
-					streamForce();
-					break;
-				case CARTESIAN_POSE_REQUEST:
-					logger.info("streaming pose");
-					streamPose();
-					break;
-				case CARTESIAN_STATE_REQUEST:
-					logger.info("cartesian state streaming is not implemented yet");
-					break;
-				default:
-					logger.error("Unsupported message type");
+				if (socket.getInputStream().available() > 0) {
+					WrapperMsg msg = WrapperMsg.parseDelimitedFrom(socket
+							.getInputStream());
+					switch (msg.getMsgCase()) {
+					case CARTESIAN_FORCE_REQUEST:
+						logger.info("streaming force");
+						streamForce();
+						break;
+					case CARTESIAN_POSE_REQUEST:
+						logger.info("streaming pose");
+						streamPose();
+						break;
+					case CARTESIAN_STATE_REQUEST:
+						logger.info("cartesian state streaming is not implemented yet");
+						break;
+					default:
+						logger.error("Unsupported message type");
+					}
 				}
-
 			} catch (InvalidProtocolBufferException e) {
 				logger.error(e.getMessage());
 			} catch (IOException e) {
@@ -84,11 +86,13 @@ public class Communicator implements Runnable {
 	}
 
 	private void streamForce() {
-		while (socket.isConnected()) {
+		while (!socket.isClosed() && socket.isConnected()) {
 			// Build the force message in the flange frame
-			CartesianForce msg = CartesianForceBuilder.buildForce(robot
+			CartesianForce force = CartesianForceBuilder.buildForce(robot
 					.getFlange().getName(), robot.getExternalForceTorque(robot
 					.getFlange()));
+			WrapperMsg msg = WrapperMsg.newBuilder().setCartesianForce(force)
+					.build();
 			try {
 				msg.writeDelimitedTo(socket.getOutputStream());
 			} catch (IOException e) {
@@ -98,10 +102,12 @@ public class Communicator implements Runnable {
 	}
 
 	private void streamPose() {
-		while (socket.isConnected()) {
+		while (!socket.isClosed() && socket.isConnected()) {
 			// Build the pose message as pose of the flange in the world
-			CartesianPose msg = CartesianPoseBuilder.buildPose(robot
+			CartesianPose pose = CartesianPoseBuilder.buildPose(robot
 					.getCurrentCartesianPosition(robot.getFlange()));
+			WrapperMsg msg = WrapperMsg.newBuilder().setCartesianPose(pose)
+					.build();
 			try {
 				msg.writeDelimitedTo(socket.getOutputStream());
 			} catch (IOException e) {

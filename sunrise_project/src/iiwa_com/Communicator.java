@@ -19,6 +19,9 @@ import com.kuka.task.ITaskLogger;
  * 
  */
 public class Communicator implements Runnable {
+	// constants
+	private final String WORLD_FRAME = "world";
+	private final String FLANGE_FRAME = "flange";
 	// transport
 	private final Socket socket;
 	// robot state
@@ -88,9 +91,9 @@ public class Communicator implements Runnable {
 	private void streamForce() {
 		while (!socket.isClosed() && socket.isConnected()) {
 			// Build the force message in the flange frame
-			CartesianForce force = CartesianForceBuilder.buildForce(robot
-					.getFlange().getName(), robot.getExternalForceTorque(robot
-					.getFlange()));
+			CartesianForce force = CartesianForceBuilder.buildForce(
+					FLANGE_FRAME,
+					robot.getExternalForceTorque(robot.getFlange()));
 			WrapperMsg msg = WrapperMsg.newBuilder().setCartesianForce(force)
 					.build();
 			try {
@@ -104,8 +107,9 @@ public class Communicator implements Runnable {
 	private void streamPose() {
 		while (!socket.isClosed() && socket.isConnected()) {
 			// Build the pose message as pose of the flange in the world
-			CartesianPose pose = CartesianPoseBuilder.buildPose(robot
-					.getCurrentCartesianPosition(robot.getFlange()));
+			CartesianPose pose = CartesianPoseBuilder.buildPose(
+					robot.getCurrentCartesianPosition(robot.getFlange()),
+					WORLD_FRAME, FLANGE_FRAME);
 			WrapperMsg msg = WrapperMsg.newBuilder().setCartesianPose(pose)
 					.build();
 			try {

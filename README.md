@@ -1,17 +1,1 @@
-# iiwa_com
-Enables basic communication with a KUKA LBR iiwa robot by utilizing a Sunrise
-Project and ROS. For now the package focuses on receiving the robots state.
-  
-# dependencies
-Depends on:
-
-- [grpc](https://grpc.io/docs/quickstart/cpp.html), install via **cmake** inside the grpc folder:
-```bash
-mkdir build
-cd build
-cmake .. -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DgRPC_PROTOBUF_PROVIDER=package -DgRPC_ZLIB_PROVIDER=package -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DCMAKE_BUILD_TYPE=Release
-make
-sudo make install
-```
-- [Protocol Buffers](https://github.com/protocolbuffers/protobuf/tree/master/src)
-- ROS: tf2_geometry_msgs, tf2_ros
+# moved to https://git.rwth-aachen.de/robo_guide/iiwa_com
